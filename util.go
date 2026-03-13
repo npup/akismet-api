@@ -8,12 +8,6 @@ import (
 	"strings"
 )
 
-func debugHeaders(resp *http.Response) {
-	for k, v := range resp.Header {
-		fmt.Printf("%s: %s\n", k, v)
-	}
-}
-
 func getDebugHelp(resp *http.Response) string {
 	return resp.Header.Get(AkismetHeaders.DebugHelp)
 }

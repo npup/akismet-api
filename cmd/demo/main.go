@@ -1,9 +1,9 @@
 package main
 
 import (
-	akismet "akismet-api/src"
 	"context"
 	"fmt"
+	akismet "github.com/npup/akismet-api"
 	"time"
 
 	"log"
@@ -15,7 +15,7 @@ import (
 var akismetClient *akismet.Client
 
 func main() {
-	godotenv.Load()
+	godotenv.Load("../../.env")
 	apiKey := os.Getenv("AKISMET_API_KEY")
 	blogURL := os.Getenv("BLOG_URL")
 

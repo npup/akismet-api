@@ -17,8 +17,34 @@ An Akismet API key is required. You can get one somewhere at [akismet.com](https
 
 ## Installation
 
+```sh
+go get github.com/npup/akismet-api
 ```
-go get akismet-go
+
+## Development
+
+### Running tests
+
+```sh
+git clone https://github.com/npup/akismet-api
+cd akismet-api
+go test ./...
+```
+
+### Running the demo
+
+The demo requires an Akismet API key. Copy `.env.template` to `.env` and fill in your credentials:
+
+```sh
+cp .env.template .env
+# edit .env
+```
+
+Then run from the `cmd/demo` directory:
+
+```sh
+cd cmd/demo
+go run main.go
 ```
 
 ## Usage
@@ -57,7 +83,7 @@ if result.IsSpam {
 }
 
 if result.RecheckAfter != nil {
-    // Akismet requests a recheck after this duration;
+    // Akismet suggests a recheck after this duration;
     // resubmit the comment with WithRecheckReason("recheck")
 }
 ```
@@ -68,7 +94,7 @@ if result.RecheckAfter != nil {
 | -------------- | ---------------- | ------------------------------------------------------------------------ |
 | `IsSpam`       | `bool`           | True if Akismet considers the comment spam                               |
 | `Discard`      | `bool`           | True if Akismet considers it blatant spam safe to discard without saving |
-| `RecheckAfter` | `*time.Duration` | If set, Akismet requests a recheck after this duration                   |
+| `RecheckAfter` | `*time.Duration` | If set, Akismet suggests a recheck after this duration                   |
 | `AkismetGUID`  | `string`         | Unique request identifier, useful when contacting Akismet support        |
 
 ### Reporting spam and ham
