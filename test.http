@@ -1,0 +1,59 @@
+# Akismet API
+
+@key = {{$dotenv AKISMET_API_KEY}}
+@blog = {{$dotenv BLOG_URL}}
+@akismetUrl = https://rest.akismet.com/1.1
+@akismetKeyedUrl = https://{{key}}x.rest.akismet.com/1.1
+
+### Verify key
+POST {{akismetUrl}}/verify-key
+Content-Type: application/x-www-form-urlencoded
+
+key={{key}}&blog={{blog}}
+
+###
+
+### Comment check
+POST {{akismetKeyedUrl}}/comment-check
+Content-Type: application/x-www-form-urlencoded
+
+is_test=1
+&blog={{blog}}
+&user_ip=127.0.0.1
+&user_agent=Mozilla/5.0
+&comment_type=comment
+&comment_author=John+Doe
+&comment_author_email=john@example.com
+&comment_content=This+is+a+test+comment
+
+###
+
+### Submit spam (false negative - missed spam)
+POST {{akismetKeyedUrl}}/submit-spam
+Content-Type: application/x-www-form-urlencoded
+
+is_test=1
+&blog={{blog}}
+&user_ip=127.0.0.1
+&user_agent=Mozilla/5.0
+&comment_type=comment
+&comment_author=John+Doe
+&comment_author_email=john@example.com
+&comment_content=This+is+a+test+comment
+
+###
+
+### Submit ham (false positive - wrongly flagged)
+POST {{akismetKeyedUrl}}/submit-ham
+Content-Type: application/x-www-form-urlencoded
+
+is_test=1
+&blog={{blog}}
+&user_ip=127.0.0.1
+&user_agent=Mozilla/5.0
+&comment_type=comment
+&comment_author=John+Doe
+&comment_author_email=john@example.com
+&comment_content=This+is+a+test+comment
+
+
