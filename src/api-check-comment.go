@@ -1,6 +1,7 @@
 package akismet
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -25,32 +26,32 @@ func (r *CheckCommentResult) String() string {
 
 // Checks whether a comment is spam. Returns an error if the request
 // fails or Akismet reports a problem with the submitted fields.
-func (c *Client) CheckComment(comment *Comment) (*CheckCommentResult, *AkismetError) {
-	//endpoint := fmt.Sprintf("%s/comment-check", c.keyedBaseURL)
-	//endpoint := fmt.Sprintf("%s/comment-check", baseURL)
-	resp, err := c.httpClient.PostForm(ApiEndpoints.CheckComment, c.commentValues(comment))
-	if err != nil {
-		// things went totally wrong
-		return nil, NewAkismetError(err, nil, "")
+func (c *Client) CheckComment(ctx context.Context, comment *Comment) (*CheckCommentResult, *AkismetError) {
+	// POST comment data
+	postBody := c.commentValues(comment)
+	resp, akismetErr := c.doPost(ctx, c.endpoints.CheckComment, postBody)
+	if akismetErr != nil {
+		// performing request went wrong
+		return nil, akismetErr
 	}
 	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
+	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		// reading body went totally wrong
+		// reading body went wrong
 		return nil, AkismetErrorFromResponse(err, resp)
 	}
 
-	bodyStr := strings.TrimSpace(string(body))
-	if bodyStr != "true" && bodyStr != "false" {
-		// unexpected response body
-		err := fmt.Errorf("unexpected response body (not `true` or `false`) [http status:%s]", resp.Status)
+	bodyStr := strings.TrimSpace(string(responseBody))
+	if bodyStr != BODY_SPAM_RESPONSE && bodyStr != BODY_HAM_RESPONSE {
+		// unexcpected response body
+		err := fmt.Errorf("unexpected response body (not `%s` or `%s`) [http status:%s]", BODY_SPAM_RESPONSE, BODY_HAM_RESPONSE, resp.Status)
 		return nil, AkismetErrorFromResponse(err, resp)
 	}
 
 	result := &CheckCommentResult{
-		IsSpam:      strings.TrimSpace(string(body)) == "true",
-		Discard:     resp.Header.Get(AkismetHeaders.ProTip) == "discard",
+		IsSpam:      bodyStr == BODY_SPAM_RESPONSE,
+		Discard:     resp.Header.Get(AkismetHeaders.ProTip) == HEADER_PROTIP_DISCARD_RESPONSE,
 		AkismetGUID: resp.Header.Get(AkismetHeaders.GUID),
 	}
 

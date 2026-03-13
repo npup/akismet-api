@@ -1,10 +1,11 @@
 package akismet
 
 import (
+	"context"
 	"fmt"
-
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 func debugHeaders(resp *http.Response) {
@@ -33,4 +34,29 @@ func getUrlWithParameters(endpoint string, params url.Values) url.URL {
 	url, _ := url.Parse(endpoint)
 	url.RawQuery = params.Encode()
 	return *url
+}
+
+func (c *Client) doPost(ctx context.Context, endpoint string, values url.Values) (*http.Response, *AkismetError) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, strings.NewReader(values.Encode()))
+	if err != nil {
+		return nil, NewAkismetError(err, nil, "")
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, NewAkismetError(err, nil, "")
+	}
+	return resp, nil
+}
+
+func (c *Client) doGet(ctx context.Context, u url.URL) (*http.Response, *AkismetError) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
+	if err != nil {
+		return nil, NewAkismetError(err, nil, "")
+	}
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, NewAkismetError(err, nil, "")
+	}
+	return resp, nil
 }

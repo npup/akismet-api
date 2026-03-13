@@ -1,28 +1,5 @@
 package akismet
 
-import "fmt"
-
-// Akismet REST API base URLs.
-const (
-	akismetBaseURL = "https://rest.akismet.com"
-)
-
-var ApiEndpoints = struct {
-	VerifyKey    string
-	CheckComment string
-	SubmitSpam   string
-	SubmitHam    string
-	KeySites     string
-	UsageLimit   string
-}{
-	VerifyKey:    fmt.Sprintf("%s/%s/verify-key", akismetBaseURL, "1.1"),
-	CheckComment: fmt.Sprintf("%s/%s/comment-check", akismetBaseURL, "1.1"),
-	SubmitSpam:   fmt.Sprintf("%s/%s/submit-spam", akismetBaseURL, "1.1"),
-	SubmitHam:    fmt.Sprintf("%s/%s/submit-ham", akismetBaseURL, "1.1"),
-	KeySites:     fmt.Sprintf("%s/%s/key-sites", akismetBaseURL, "1.2"),
-	UsageLimit:   fmt.Sprintf("%s/%s/usage-limit", akismetBaseURL, "1.2"),
-}
-
 // AkismetHeaders contains the Akismet response header names.
 var AkismetHeaders = struct {
 	DebugHelp    string
@@ -40,6 +17,7 @@ var AkismetHeaders = struct {
 	AlertMsg:     "X-Akismet-alert-msg",
 }
 
+// text descriptions pertaining to alert codes
 var AlertDescriptionsByCode = map[int]string{
 	10001: "Your site is using an expired Yahoo! Small Business API key.",
 	10003: "You must upgrade your Personal subscription to continue using Akismet.",
@@ -53,3 +31,13 @@ var AlertDescriptionsByCode = map[int]string{
 	10404: "Your site was not found in the list of sites allowed to use the API key you used.",
 	30001: "Your Personal subscription needs to be upgraded based on your usage.",
 }
+
+// Constant messages that the API responds with - instead of
+// proper http status codes in some cases :-(
+const BODY_REPORT_SUCCESS_MESSAGE = "Thanks for making the web a better place."
+const BODY_INVALID_MESSAGE = "invalid"
+const BODY_VALID_MESSAGE = "valid"
+const BODY_SPAM_RESPONSE = "true"
+const BODY_HAM_RESPONSE = "false"
+const HEADER_PROTIP_DISCARD_RESPONSE = "discard"
+const PROP_USAGE_LIMIT_NO_LIMIT = "none"

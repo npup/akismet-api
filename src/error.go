@@ -20,7 +20,7 @@ func AkismetErrorFromResponse(err error, resp *http.Response) *AkismetError {
 	// debughelp really not available unless reponse is invalid
 	// (not true|false) but picking it up here anyway
 	debugHelp := getDebugHelp(resp)
-	if alert == nil && debugHelp == "" {
+	if alert == nil && debugHelp == "" && err == nil {
 		return nil
 	}
 	return NewAkismetError(err, alert, debugHelp)

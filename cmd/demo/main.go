@@ -1,7 +1,8 @@
 package main
 
 import (
-	akismet "akismet-go/src"
+	akismet "akismet-api/src"
+	"context"
 	"fmt"
 	"time"
 
@@ -20,7 +21,7 @@ func main() {
 
 	log.Printf("Using API key: %s\n", apiKey)
 
-	client, err := akismet.NewClient(apiKey, blogURL)
+	client, err := akismet.NewClient(context.Background(), apiKey, blogURL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,7 +55,8 @@ func checkComment() {
 
 	//fmt.Printf("Checking comment %+v\n", comment)
 
-	result, err := akismetClient.CheckComment(comment)
+	result, err := akismetClient.CheckComment(context.Background(), comment)
+
 	if err != nil {
 		log.Fatal(err)
 	}

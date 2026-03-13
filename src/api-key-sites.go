@@ -1,6 +1,7 @@
 package akismet
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -55,7 +56,7 @@ type KeySitesResult struct {
 
 // Lists the sites using your API key along with their usage statistics.
 // Pass nil for params to use all defaults.
-func (c *Client) GetKeySites(params *KeySitesParams) (*KeySitesResult, *AkismetError) {
+func (c *Client) GetKeySites(ctx context.Context, params *KeySitesParams) (*KeySitesResult, *AkismetError) {
 	q := url.Values{"api_key": {c.apiKey}}
 	if params != nil {
 		if params.Month != "" {
@@ -75,27 +76,27 @@ func (c *Client) GetKeySites(params *KeySitesParams) (*KeySitesResult, *AkismetE
 		}
 	}
 
-	url := getUrlWithParameters(ApiEndpoints.KeySites, q)
-	resp, err := c.httpClient.Get(url.String())
-	if err != nil {
-		return nil, NewAkismetError(err, nil, "")
+	u := getUrlWithParameters(c.endpoints.KeySites, q)
+	resp, akismetErr := c.doGet(ctx, u)
+	if akismetErr != nil {
+		return nil, akismetErr
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, NewAkismetError(err, getAlert(resp), getDebugHelp(resp))
+		return nil, AkismetErrorFromResponse(err, resp)
 	}
 
-	if strings.TrimSpace(string(body)) == "invalid" {
-		return nil, NewAkismetError(fmt.Errorf("akismet: invalid API key"), getAlert(resp), getDebugHelp(resp))
+	if strings.TrimSpace(string(body)) == BODY_INVALID_MESSAGE {
+		return nil, AkismetErrorFromResponse(fmt.Errorf("akismet: invalid API key"), resp)
 	}
 
 	// The response is a flat JSON object where most keys are site URLs mapping
 	// to stat objects, with "limit", "offset", and "total" as metadata keys.
 	var raw map[string]json.RawMessage
 	if err := json.Unmarshal(body, &raw); err != nil {
-		return nil, NewAkismetError(fmt.Errorf("akismet: unexpected response: %w", err), getAlert(resp), getDebugHelp(resp))
+		return nil, AkismetErrorFromResponse(fmt.Errorf("akismet: unexpected response: %w", err), resp)
 	}
 
 	result := &KeySitesResult{}

@@ -1,24 +1,48 @@
 package akismet
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"time"
 )
+
+type ApiEndpoints = struct {
+	VerifyKey    string
+	CheckComment string
+	SubmitSpam   string
+	SubmitHam    string
+	KeySites     string
+	UsageLimit   string
+}
 
 // Holds the API credentials and constructed URLs for making requests.
 type Client struct {
 	apiKey     string
 	blogURL    string
 	httpClient *http.Client
+	endpoints  ApiEndpoints
 }
 
 // Creates a new Akismet client and verifies the API key before returning.
 // Returns an error if the key is invalid or the verification request fails.
-func NewClient(apiKey, blogURL string) (*Client, error) {
-	// build internal data and verify api key
-	client := &Client{apiKey: apiKey, blogURL: blogURL, httpClient: &http.Client{}}
-	if err := client.verifyKey(); err != nil {
+func NewClient(ctx context.Context, apiKey, blogURL string) (*Client, *AkismetError) {
+	akismetBaseURL := "https://rest.akismet.com"
+	return newClientWithApiBaseURL(ctx, apiKey, blogURL, akismetBaseURL)
+}
+
+func newClientWithApiBaseURL(ctx context.Context, apiKey, blogURL string, apiBaseURL string) (*Client, *AkismetError) {
+	endpoints := ApiEndpoints{
+		VerifyKey:    fmt.Sprintf("%s/%s/verify-key", apiBaseURL, "1.1"),
+		CheckComment: fmt.Sprintf("%s/%s/comment-check", apiBaseURL, "1.1"),
+		SubmitSpam:   fmt.Sprintf("%s/%s/submit-spam", apiBaseURL, "1.1"),
+		SubmitHam:    fmt.Sprintf("%s/%s/submit-ham", apiBaseURL, "1.1"),
+		KeySites:     fmt.Sprintf("%s/%s/key-sites", apiBaseURL, "1.2"),
+		UsageLimit:   fmt.Sprintf("%s/%s/usage-limit", apiBaseURL, "1.2"),
+	}
+	client := &Client{apiKey: apiKey, blogURL: blogURL, httpClient: &http.Client{}, endpoints: endpoints}
+	if err := client.verifyKey(ctx); err != nil {
 		return nil, err
 	}
 	return client, nil

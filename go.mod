@@ -1,4 +1,4 @@
-module akismet-go
+module akismet-api
 
 go 1.26.1
 
