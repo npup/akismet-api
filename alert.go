@@ -8,7 +8,7 @@ type Alert struct {
 	Description string
 }
 
-func NewAlert(code int, message string) *Alert {
+func newAlert(code int, message string) *Alert {
 	descr, ok := alertDescriptionsByCode[code]
 	if !ok {
 		descr = fmt.Sprintf("No descr for alert code %d", code)

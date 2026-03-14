@@ -21,7 +21,7 @@ func getAlert(resp *http.Response) *Alert {
 	if code == -1 || message == "" {
 		return nil
 	}
-	return NewAlert(code, message)
+	return newAlert(code, message)
 }
 
 func getUrlWithParameters(endpoint string, params url.Values) url.URL {
