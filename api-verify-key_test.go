@@ -25,7 +25,7 @@ func TestVerifyKey_Valid(t *testing.T) {
 		t.Fatalf("expected no error, got: %v", err)
 	}
 
-	expected := ApiEndpoints{
+	expected := apiEndpoints{
 		VerifyKey:    serverURL + "/1.1/verify-key",
 		CheckComment: serverURL + "/1.1/comment-check",
 		SubmitSpam:   serverURL + "/1.1/submit-spam",

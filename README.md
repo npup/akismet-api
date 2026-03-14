@@ -18,7 +18,7 @@ An Akismet API key is required. You can get one somewhere at [akismet.com](https
 ## Installation
 
 ```sh
-go get github.com/npup/akismet-api@0.3.1
+go get github.com/npup/akismet-api@0.3.2
 ```
 
 ## Development

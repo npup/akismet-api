@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type ApiEndpoints = struct {
+type apiEndpoints = struct {
 	VerifyKey    string
 	CheckComment string
 	SubmitSpam   string
@@ -22,7 +22,7 @@ type Client struct {
 	apiKey     string
 	blogURL    string
 	httpClient *http.Client
-	endpoints  ApiEndpoints
+	endpoints  apiEndpoints
 }
 
 // Creates a new Akismet client and verifies the API key before returning.
@@ -33,7 +33,7 @@ func NewClient(ctx context.Context, apiKey, blogURL string) (*Client, *AkismetEr
 }
 
 func newClientWithApiBaseURL(ctx context.Context, apiKey, blogURL string, apiBaseURL string) (*Client, *AkismetError) {
-	endpoints := ApiEndpoints{
+	endpoints := apiEndpoints{
 		VerifyKey:    fmt.Sprintf("%s/%s/verify-key", apiBaseURL, "1.1"),
 		CheckComment: fmt.Sprintf("%s/%s/comment-check", apiBaseURL, "1.1"),
 		SubmitSpam:   fmt.Sprintf("%s/%s/submit-spam", apiBaseURL, "1.1"),
