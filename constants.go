@@ -1,7 +1,7 @@
 package akismet
 
-// AkismetHeaders contains the Akismet response header names.
-var AkismetHeaders = struct {
+// akismetHeaders contains the Akismet response header names.
+var akismetHeaders = struct {
 	DebugHelp    string
 	ProTip       string
 	RecheckAfter string
@@ -18,7 +18,7 @@ var AkismetHeaders = struct {
 }
 
 // text descriptions pertaining to alert codes
-var AlertDescriptionsByCode = map[int]string{
+var alertDescriptionsByCode = map[int]string{
 	10001: "Your site is using an expired Yahoo! Small Business API key.",
 	10003: "You must upgrade your Personal subscription to continue using Akismet.",
 	10005: "Your Akismet API key may be in use by someone else.",
@@ -34,10 +34,10 @@ var AlertDescriptionsByCode = map[int]string{
 
 // Constant messages that the API responds with - instead of
 // proper http status codes in some cases :-(
-const BODY_REPORT_SUCCESS_MESSAGE = "Thanks for making the web a better place."
-const BODY_INVALID_MESSAGE = "invalid"
-const BODY_VALID_MESSAGE = "valid"
-const BODY_SPAM_RESPONSE = "true"
-const BODY_HAM_RESPONSE = "false"
-const HEADER_PROTIP_DISCARD_RESPONSE = "discard"
-const PROP_USAGE_LIMIT_NO_LIMIT = "none"
+const bodyReportSuccessMessage = "Thanks for making the web a better place."
+const bodyInvalidMessage = "invalid"
+const bodyValidMessage = "valid"
+const bodySpamResponse = "true"
+const bodyHamResponse = "false"
+const headerProtipDiscardResponse = "discard"
+const propUsageLimitNoLimit = "none"

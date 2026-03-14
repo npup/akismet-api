@@ -27,12 +27,12 @@ func (c *Client) report(ctx context.Context, endpoint string, comment *Comment) 
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return AkismetErrorFromResponse(err, resp)
+		return akismetErrorFromResponse(err, resp)
 	}
 
-	if strings.TrimSpace(string(body)) != BODY_REPORT_SUCCESS_MESSAGE {
+	if strings.TrimSpace(string(body)) != bodyReportSuccessMessage {
 		err := fmt.Errorf("akismet: unexpected response: %s", strings.TrimSpace(string(body)))
-		return AkismetErrorFromResponse(err, resp)
+		return akismetErrorFromResponse(err, resp)
 	}
 
 	return nil

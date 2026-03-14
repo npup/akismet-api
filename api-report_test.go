@@ -14,7 +14,7 @@ func mockComment(text string, userIp string, userAgent string) *Comment {
 }
 
 func TestReportSpam_Success(t *testing.T) {
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, BODY_REPORT_SUCCESS_MESSAGE)
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, bodyReportSuccessMessage)
 	defer server.Close()
 
 	// mock data
@@ -32,7 +32,7 @@ func TestReportSpam_Success(t *testing.T) {
 }
 
 func TestReportHam_Success(t *testing.T) {
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, BODY_REPORT_SUCCESS_MESSAGE)
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, bodyReportSuccessMessage)
 	defer server.Close()
 
 	// mock data
@@ -55,11 +55,11 @@ func TestReportSpam_HitsCorrectEndpoint(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		callCount++
 		if callCount == 1 {
-			w.Write([]byte(BODY_VALID_MESSAGE))
+			w.Write([]byte(bodyValidMessage))
 			return
 		}
 		gotPath = r.URL.Path
-		w.Write([]byte(BODY_REPORT_SUCCESS_MESSAGE))
+		w.Write([]byte(bodyReportSuccessMessage))
 	}))
 	defer server.Close()
 
@@ -84,11 +84,11 @@ func TestReportHam_HitsCorrectEndpoint(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		callCount++
 		if callCount == 1 {
-			w.Write([]byte(BODY_VALID_MESSAGE))
+			w.Write([]byte(bodyValidMessage))
 			return
 		}
 		gotPath = r.URL.Path
-		w.Write([]byte(BODY_REPORT_SUCCESS_MESSAGE))
+		w.Write([]byte(bodyReportSuccessMessage))
 	}))
 	defer server.Close()
 
@@ -108,7 +108,7 @@ func TestReportHam_HitsCorrectEndpoint(t *testing.T) {
 }
 
 func TestReport_UnexpectedResponse(t *testing.T) {
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, "something went wrong")
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, "something went wrong")
 	defer server.Close()
 
 	// mock data
@@ -129,7 +129,7 @@ func TestReport_UnexpectedResponse(t *testing.T) {
 }
 
 func TestReport_ServerDown(t *testing.T) {
-	server := makeServer(http.StatusOK, BODY_VALID_MESSAGE)
+	server := makeServer(http.StatusOK, bodyValidMessage)
 	serverURL := server.URL
 
 	// mock data
@@ -162,14 +162,14 @@ func TestReport_RequestBody(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		callCount++
 		if callCount == 1 {
-			w.Write([]byte(BODY_VALID_MESSAGE))
+			w.Write([]byte(bodyValidMessage))
 			return
 		}
 		r.ParseForm()
 		gotAPIKey = r.FormValue("api_key")
 		gotUserIP = r.FormValue("user_ip")
 		gotUserAgent = r.FormValue("user_agent")
-		w.Write([]byte(BODY_REPORT_SUCCESS_MESSAGE))
+		w.Write([]byte(bodyReportSuccessMessage))
 	}))
 	defer server.Close()
 

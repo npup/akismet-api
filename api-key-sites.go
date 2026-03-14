@@ -85,18 +85,18 @@ func (c *Client) GetKeySites(ctx context.Context, params *KeySitesParams) (*KeyS
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, AkismetErrorFromResponse(err, resp)
+		return nil, akismetErrorFromResponse(err, resp)
 	}
 
-	if strings.TrimSpace(string(body)) == BODY_INVALID_MESSAGE {
-		return nil, AkismetErrorFromResponse(fmt.Errorf("akismet: invalid API key"), resp)
+	if strings.TrimSpace(string(body)) == bodyInvalidMessage {
+		return nil, akismetErrorFromResponse(fmt.Errorf("akismet: invalid API key"), resp)
 	}
 
 	// The response is a flat JSON object where most keys are site URLs mapping
 	// to stat objects, with "limit", "offset", and "total" as metadata keys.
 	var raw map[string]json.RawMessage
 	if err := json.Unmarshal(body, &raw); err != nil {
-		return nil, AkismetErrorFromResponse(fmt.Errorf("akismet: unexpected response: %w", err), resp)
+		return nil, akismetErrorFromResponse(fmt.Errorf("akismet: unexpected response: %w", err), resp)
 	}
 
 	result := &KeySitesResult{}

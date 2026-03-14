@@ -9,7 +9,7 @@ type Alert struct {
 }
 
 func NewAlert(code int, message string) *Alert {
-	descr, ok := AlertDescriptionsByCode[code]
+	descr, ok := alertDescriptionsByCode[code]
 	if !ok {
 		descr = fmt.Sprintf("No descr for alert code %d", code)
 	}

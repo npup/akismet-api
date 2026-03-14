@@ -15,7 +15,7 @@ func TestGetKeySites_Valid(t *testing.T) {
 		"offset": 0,
 		"total": 2
 	}`
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, responseBody)
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, responseBody)
 	defer server.Close()
 
 	client := makeClientWithServer(t, server, "my-apikey", "http://my-blog.example.com")
@@ -69,7 +69,7 @@ func TestGetKeySites_IsRevoked(t *testing.T) {
 		"offset": 0,
 		"total": 1
 	}`
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, responseBody)
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, responseBody)
 	defer server.Close()
 
 	client := makeClientWithServer(t, server, "my-apikey", "http://my-blog.example.com")
@@ -92,7 +92,7 @@ func TestGetKeySites_Pagination(t *testing.T) {
 		"offset": 20,
 		"total": 100
 	}`
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, responseBody)
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, responseBody)
 	defer server.Close()
 
 	client := makeClientWithServer(t, server, "my-apikey", "http://my-blog.example.com")
@@ -112,7 +112,7 @@ func TestGetKeySites_Pagination(t *testing.T) {
 }
 
 func TestGetKeySites_InvalidKey(t *testing.T) {
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, BODY_INVALID_MESSAGE)
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, bodyInvalidMessage)
 	defer server.Close()
 
 	client := makeClientWithServer(t, server, "my-apikey", "http://my-blog.example.com")
@@ -126,7 +126,7 @@ func TestGetKeySites_InvalidKey(t *testing.T) {
 }
 
 func TestGetKeySites_MalformedResponse(t *testing.T) {
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, "this is not json")
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, "this is not json")
 	defer server.Close()
 
 	client := makeClientWithServer(t, server, "my-apikey", "http://my-blog.example.com")
@@ -137,7 +137,7 @@ func TestGetKeySites_MalformedResponse(t *testing.T) {
 }
 
 func TestGetKeySites_ServerDown(t *testing.T) {
-	server := makeServer(http.StatusOK, BODY_VALID_MESSAGE)
+	server := makeServer(http.StatusOK, bodyValidMessage)
 	serverURL := server.URL
 	client, clientErr := newClientWithApiBaseURL(context.Background(), "test-key", "http://example.com", serverURL)
 	if clientErr != nil {
@@ -160,7 +160,7 @@ func TestGetKeySites_QueryParams(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		callCount++
 		if callCount == 1 {
-			w.Write([]byte(BODY_VALID_MESSAGE))
+			w.Write([]byte(bodyValidMessage))
 			return
 		}
 		q := r.URL.Query()
@@ -209,7 +209,7 @@ func TestGetKeySites_NilParams_OnlySendsAPIKey(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		callCount++
 		if callCount == 1 {
-			w.Write([]byte(BODY_VALID_MESSAGE))
+			w.Write([]byte(bodyValidMessage))
 			return
 		}
 		gotQuery = r.URL.RawQuery

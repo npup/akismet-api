@@ -34,7 +34,7 @@ func makeVerifyThenRespond(verifyResponse string, nextStatus int, nextResponse s
 
 func TestGetUsageLimit_Valid(t *testing.T) {
 	responseBody := `{"limit":"1000","usage":423,"percentage":"42.3","throttled":false}`
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, responseBody)
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, responseBody)
 	defer server.Close()
 	myApiKey := "my-apikey"
 	myBlogURL := "http://my-blog.example.com"
@@ -59,8 +59,8 @@ func TestGetUsageLimit_Valid(t *testing.T) {
 }
 
 func TestGetUsageLimit_Unlimited(t *testing.T) {
-	responseBody := fmt.Sprintf(`{"limit":"%s","usage":0,"percentage":"0","throttled":false}`, PROP_USAGE_LIMIT_NO_LIMIT)
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, responseBody)
+	responseBody := fmt.Sprintf(`{"limit":"%s","usage":0,"percentage":"0","throttled":false}`, propUsageLimitNoLimit)
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, responseBody)
 	defer server.Close()
 	myApiKey := "my-apikey"
 	myBlogURL := "http://my-blog.example.com"
@@ -77,7 +77,7 @@ func TestGetUsageLimit_Unlimited(t *testing.T) {
 
 func TestGetUsageLimit_Throttled(t *testing.T) {
 	responseBody := `{"limit":"1000","usage":1100,"percentage":"110.0","throttled":true}`
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, responseBody)
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, responseBody)
 	defer server.Close()
 
 	myApiKey := "my-apikey"
@@ -97,7 +97,7 @@ func TestGetUsageLimit_Throttled(t *testing.T) {
 }
 
 func TestGetUsageLimit_InvalidKey(t *testing.T) {
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, BODY_INVALID_MESSAGE)
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, bodyInvalidMessage)
 	defer server.Close()
 	myApiKey := "my-apikey"
 	myBlogURL := "http://my-blog.example.com"
@@ -113,7 +113,7 @@ func TestGetUsageLimit_InvalidKey(t *testing.T) {
 }
 
 func TestGetUsageLimit_MalformedResponse(t *testing.T) {
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, "this is not json")
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, "this is not json")
 	defer server.Close()
 	myApiKey := "my-apikey"
 	myBlogURL := "http://my-blog.example.com"
@@ -126,7 +126,7 @@ func TestGetUsageLimit_MalformedResponse(t *testing.T) {
 }
 
 func TestGetUsageLimit_ServerDown(t *testing.T) {
-	server := makeServer(http.StatusOK, BODY_VALID_MESSAGE)
+	server := makeServer(http.StatusOK, bodyValidMessage)
 	serverURL := server.URL
 	client, clientErr := newClientWithApiBaseURL(context.Background(), "test-key", "http://example.com", serverURL)
 	if clientErr != nil {
@@ -149,7 +149,7 @@ func TestGetUsageLimit_RequestParams(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		callCount++
 		if callCount == 1 {
-			w.Write([]byte(BODY_VALID_MESSAGE))
+			w.Write([]byte(bodyValidMessage))
 			return
 		}
 		gotAPIKey = r.URL.Query().Get("api_key")

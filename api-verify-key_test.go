@@ -15,7 +15,7 @@ func makeServer(httpStatus int, responseText string) *httptest.Server {
 	return server
 }
 func TestVerifyKey_Valid(t *testing.T) {
-	server := makeServer(http.StatusOK, BODY_VALID_MESSAGE)
+	server := makeServer(http.StatusOK, bodyValidMessage)
 	defer server.Close()
 
 	serverURL := server.URL
@@ -39,7 +39,7 @@ func TestVerifyKey_Valid(t *testing.T) {
 }
 
 func TestVerifyKey_ServerDown(t *testing.T) {
-	server := makeServer(http.StatusOK, BODY_VALID_MESSAGE)
+	server := makeServer(http.StatusOK, bodyValidMessage)
 	server.Close()
 
 	_, err := newClientWithApiBaseURL(context.Background(), "test-key", "http://example.com", server.URL)
@@ -61,7 +61,7 @@ func TestVerifyKey_ServerDown(t *testing.T) {
 }
 
 func TestVerifyKey_Invalid(t *testing.T) {
-	server := makeServer(http.StatusOK, BODY_INVALID_MESSAGE)
+	server := makeServer(http.StatusOK, bodyInvalidMessage)
 	defer server.Close()
 
 	_, err := newClientWithApiBaseURL(context.Background(), "bad-key", "http://example.com", server.URL)
@@ -93,7 +93,7 @@ func TestVerifyKey_RequestBody(t *testing.T) {
 		r.ParseForm()
 		gotKey = r.FormValue("key")
 		gotBlog = r.FormValue("blog")
-		w.Write([]byte(BODY_VALID_MESSAGE))
+		w.Write([]byte(bodyValidMessage))
 	}))
 	defer server.Close()
 

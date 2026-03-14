@@ -14,7 +14,7 @@ type AkismetError struct {
 // Buils an AkismetError from an http.Response, extracting
 // alert and debug help info from the headers if available.
 // return nil if none of that info was present
-func AkismetErrorFromResponse(err error, resp *http.Response) *AkismetError {
+func akismetErrorFromResponse(err error, resp *http.Response) *AkismetError {
 	// alert message from akismet headers
 	alert := getAlert(resp)
 	// debughelp really not available unless reponse is invalid
@@ -23,10 +23,10 @@ func AkismetErrorFromResponse(err error, resp *http.Response) *AkismetError {
 	if alert == nil && debugHelp == "" && err == nil {
 		return nil
 	}
-	return NewAkismetError(err, alert, debugHelp)
+	return newAkismetError(err, alert, debugHelp)
 }
 
-func NewAkismetError(err error, alert *Alert, debugHelp string) *AkismetError {
+func newAkismetError(err error, alert *Alert, debugHelp string) *AkismetError {
 	return &AkismetError{
 		Err:       err,
 		DebugHelp: debugHelp,

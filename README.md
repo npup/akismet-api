@@ -18,7 +18,7 @@ An Akismet API key is required. You can get one somewhere at [akismet.com](https
 ## Installation
 
 ```sh
-go get github.com/npup/akismet-api@0.2.1
+go get github.com/npup/akismet-api@0.3.0
 ```
 
 ## Development
@@ -210,4 +210,4 @@ if err != nil {
 | `DebugHelp` | `string` | Value of the `X-Akismet-debug-help` response header, if present |
 | `Alert`     | `*Alert` | Akismet account alert, if present (see below)                   |
 
-`Alert` fields: `Code int`, `Message string`, `Description string`. Known alert codes and their descriptions are listed in `AlertDescriptionsByCode`.
+`Alert` fields: `Code int`, `Message string`, `Description string`.

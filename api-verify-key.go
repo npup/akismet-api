@@ -22,11 +22,11 @@ func (c *Client) verifyKey(ctx context.Context) *AkismetError {
 
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return AkismetErrorFromResponse(err, resp)
+		return akismetErrorFromResponse(err, resp)
 	}
 
-	if strings.TrimSpace(string(responseBody)) != BODY_VALID_MESSAGE {
-		return AkismetErrorFromResponse(fmt.Errorf("akismet: invalid API key"), resp)
+	if strings.TrimSpace(string(responseBody)) != bodyValidMessage {
+		return akismetErrorFromResponse(fmt.Errorf("akismet: invalid API key"), resp)
 	}
 
 	return nil

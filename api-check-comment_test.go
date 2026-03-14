@@ -9,7 +9,7 @@ import (
 )
 
 func TestCheckComment_Ham(t *testing.T) {
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, BODY_HAM_RESPONSE)
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, bodyHamResponse)
 	defer server.Close()
 
 	client := makeClientWithServer(t, server, "my-apikey", "http://my-blog.example.com")
@@ -26,7 +26,7 @@ func TestCheckComment_Ham(t *testing.T) {
 }
 
 func TestCheckComment_Spam(t *testing.T) {
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, BODY_SPAM_RESPONSE)
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, bodySpamResponse)
 	defer server.Close()
 
 	client := makeClientWithServer(t, server, "my-apikey", "http://my-blog.example.com")
@@ -44,11 +44,11 @@ func TestCheckComment_Discard(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		callCount++
 		if callCount == 1 {
-			w.Write([]byte(BODY_VALID_MESSAGE))
+			w.Write([]byte(bodyValidMessage))
 			return
 		}
-		w.Header().Set(AkismetHeaders.ProTip, HEADER_PROTIP_DISCARD_RESPONSE)
-		w.Write([]byte(BODY_SPAM_RESPONSE))
+		w.Header().Set(akismetHeaders.ProTip, headerProtipDiscardResponse)
+		w.Write([]byte(bodySpamResponse))
 	}))
 	defer server.Close()
 
@@ -70,11 +70,11 @@ func TestCheckComment_RecheckAfter(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		callCount++
 		if callCount == 1 {
-			w.Write([]byte(BODY_VALID_MESSAGE))
+			w.Write([]byte(bodyValidMessage))
 			return
 		}
-		w.Header().Set(AkismetHeaders.RecheckAfter, "30")
-		w.Write([]byte(BODY_HAM_RESPONSE))
+		w.Header().Set(akismetHeaders.RecheckAfter, "30")
+		w.Write([]byte(bodyHamResponse))
 	}))
 	defer server.Close()
 
@@ -96,11 +96,11 @@ func TestCheckComment_AkismetGUID(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		callCount++
 		if callCount == 1 {
-			w.Write([]byte(BODY_VALID_MESSAGE))
+			w.Write([]byte(bodyValidMessage))
 			return
 		}
-		w.Header().Set(AkismetHeaders.GUID, "abc-123-guid")
-		w.Write([]byte(BODY_HAM_RESPONSE))
+		w.Header().Set(akismetHeaders.GUID, "abc-123-guid")
+		w.Write([]byte(bodyHamResponse))
 	}))
 	defer server.Close()
 
@@ -115,7 +115,7 @@ func TestCheckComment_AkismetGUID(t *testing.T) {
 }
 
 func TestCheckComment_UnexpectedResponse(t *testing.T) {
-	server := makeVerifyThenRespond(BODY_VALID_MESSAGE, http.StatusOK, "something unexpected")
+	server := makeVerifyThenRespond(bodyValidMessage, http.StatusOK, "something unexpected")
 	defer server.Close()
 
 	client := makeClientWithServer(t, server, "my-apikey", "http://my-blog.example.com")
@@ -129,7 +129,7 @@ func TestCheckComment_UnexpectedResponse(t *testing.T) {
 }
 
 func TestCheckComment_ServerDown(t *testing.T) {
-	server := makeServer(http.StatusOK, BODY_VALID_MESSAGE)
+	server := makeServer(http.StatusOK, bodyValidMessage)
 	serverURL := server.URL
 	client, clientErr := newClientWithApiBaseURL(context.Background(), "test-key", "http://example.com", serverURL)
 	if clientErr != nil {
@@ -152,11 +152,11 @@ func TestCheckComment_HitsCorrectEndpoint(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		callCount++
 		if callCount == 1 {
-			w.Write([]byte(BODY_VALID_MESSAGE))
+			w.Write([]byte(bodyValidMessage))
 			return
 		}
 		gotPath = r.URL.Path
-		w.Write([]byte(BODY_HAM_RESPONSE))
+		w.Write([]byte(bodyHamResponse))
 	}))
 	defer server.Close()
 
@@ -174,7 +174,7 @@ func TestCheckComment_RequestBody(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		callCount++
 		if callCount == 1 {
-			w.Write([]byte(BODY_VALID_MESSAGE))
+			w.Write([]byte(bodyValidMessage))
 			return
 		}
 		r.ParseForm()
@@ -182,7 +182,7 @@ func TestCheckComment_RequestBody(t *testing.T) {
 		gotUserIP = r.FormValue("user_ip")
 		gotUserAgent = r.FormValue("user_agent")
 		gotCommentContent = r.FormValue("comment_content")
-		w.Write([]byte(BODY_HAM_RESPONSE))
+		w.Write([]byte(bodyHamResponse))
 	}))
 	defer server.Close()
 

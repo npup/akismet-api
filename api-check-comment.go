@@ -39,23 +39,23 @@ func (c *Client) CheckComment(ctx context.Context, comment *Comment) (*CheckComm
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		// reading body went wrong
-		return nil, AkismetErrorFromResponse(err, resp)
+		return nil, akismetErrorFromResponse(err, resp)
 	}
 
 	bodyStr := strings.TrimSpace(string(responseBody))
-	if bodyStr != BODY_SPAM_RESPONSE && bodyStr != BODY_HAM_RESPONSE {
+	if bodyStr != bodySpamResponse && bodyStr != bodyHamResponse {
 		// unexcpected response body
-		err := fmt.Errorf("unexpected response body (not `%s` or `%s`) [http status:%s]", BODY_SPAM_RESPONSE, BODY_HAM_RESPONSE, resp.Status)
-		return nil, AkismetErrorFromResponse(err, resp)
+		err := fmt.Errorf("unexpected response body (not `%s` or `%s`) [http status:%s]", bodySpamResponse, bodyHamResponse, resp.Status)
+		return nil, akismetErrorFromResponse(err, resp)
 	}
 
 	result := &CheckCommentResult{
-		IsSpam:      bodyStr == BODY_SPAM_RESPONSE,
-		Discard:     resp.Header.Get(AkismetHeaders.ProTip) == HEADER_PROTIP_DISCARD_RESPONSE,
-		AkismetGUID: resp.Header.Get(AkismetHeaders.GUID),
+		IsSpam:      bodyStr == bodySpamResponse,
+		Discard:     resp.Header.Get(akismetHeaders.ProTip) == headerProtipDiscardResponse,
+		AkismetGUID: resp.Header.Get(akismetHeaders.GUID),
 	}
 
-	if s := resp.Header.Get(AkismetHeaders.RecheckAfter); s != "" {
+	if s := resp.Header.Get(akismetHeaders.RecheckAfter); s != "" {
 		if secs, err := strconv.Atoi(s); err == nil {
 			d := time.Duration(secs) * time.Second
 			result.RecheckAfter = &d
